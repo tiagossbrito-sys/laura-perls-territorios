@@ -1,0 +1,1275 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="robots" content="noindex, nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Quiz · Laura Perls — Territórios, Trajetórias e Travessias</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="questions.js"></script>
+<script>
+/* Decodifica o banco de perguntas em memória — não exposto no DOM */
+(function(){
+  function b64u(s){
+    const bin=atob(s),bytes=new Uint8Array(bin.length);
+    for(let i=0;i<bin.length;i++)bytes[i]=bin.charCodeAt(i);
+    return new TextDecoder('utf-8').decode(bytes);
+  }
+  const raw=JSON.parse(b64u(_Q));
+  window.QUESTIONS=raw.map(q=>({
+    id:q.id,category:q.category,difficulty:q.difficulty,
+    question:q.question,options:q.options,
+    correct:q._c^_K,
+    explanation:b64u(q._e)
+  }));
+})();
+</script>
+<style>
+/* ══ TOKENS ══════════════════════════════════════════ */
+:root {
+  --bg: #f5f4f0;
+  --card: #fff;
+  --border: #e0ddd8;
+  --border2: #ccc9c2;
+  --accent: #7a1f6e;
+  --accent-dark: #5c1454;
+  --accent-bg: #f5edf4;
+  --accent-light: #e8d0e6;
+  --correct: #1a70b8;
+  --correct-bg: #cde3f5;
+  --wrong: #d32f2f;
+  --wrong-bg: #fde8e8;
+  --gold: #b07810;
+  --t1: #1a1917;
+  --t2: #5a574f;
+  --tm: #9b9890;
+  --fd: 'Playfair Display', Georgia, serif;
+  --fb: 'DM Sans', system-ui, sans-serif;
+  --fm: 'JetBrains Mono', monospace;
+  --radius: 20px;
+  --shadow: 0 4px 24px rgba(0,0,0,.10);
+  --shadow-lg: 0 8px 40px rgba(0,0,0,.16);
+}
+
+/* ══ RESET ═══════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { height: 100%; }
+body {
+  height: 100%;
+  background: var(--bg);
+  font-family: var(--fb);
+  font-size: 15px;
+  color: var(--t1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+}
+
+/* ══ PHONE SHELL ═════════════════════════════════════ */
+#app {
+  width: 100%;
+  max-width: 390px;
+  min-height: 100vh;
+  min-height: 100dvh;
+  background: var(--bg);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: var(--shadow-lg);
+}
+
+@media (min-height: 700px) and (min-width: 420px) {
+  #app {
+    min-height: 844px;
+    max-height: 844px;
+    border-radius: 44px;
+    border: 1px solid var(--border);
+  }
+  body { padding: 20px; }
+}
+
+/* ══ TELAS ═══════════════════════════════════════════ */
+.screen {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  transition: transform .32s cubic-bezier(.4,0,.2,1), opacity .32s ease;
+  transform: translateX(100%);
+  opacity: 0;
+  pointer-events: none;
+  scrollbar-width: none;
+}
+.screen::-webkit-scrollbar { display: none; }
+.screen.active {
+  transform: translateX(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+.screen.exit-left {
+  transform: translateX(-60%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ══ HEADER COMUM ════════════════════════════════════ */
+.screen-header {
+  background: linear-gradient(135deg, #2d0a2a, #5c1454 40%, #7a1f6e);
+  color: #fff;
+  padding: 52px 24px 28px;
+  flex-shrink: 0;
+}
+.screen-header .star {
+  font-size: 28px;
+  margin-bottom: 6px;
+  display: block;
+}
+.screen-header h1 {
+  font-family: var(--fd);
+  font-size: 22px;
+  font-weight: 900;
+  line-height: 1.2;
+  margin-bottom: 4px;
+}
+.screen-header .sub {
+  font-size: 11px;
+  opacity: .75;
+  font-style: italic;
+  line-height: 1.5;
+}
+
+/* ══ BOTÕES ══════════════════════════════════════════ */
+.btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 16px 20px;
+  border-radius: 14px;
+  border: none;
+  font-family: var(--fb);
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform .12s, box-shadow .12s, background .15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.btn:active { transform: scale(.96); }
+.btn-primary {
+  background: var(--accent);
+  color: #fff;
+  box-shadow: 0 4px 14px rgba(122,31,110,.35);
+}
+.btn-primary:hover { background: var(--accent-dark); }
+.btn-outline {
+  background: transparent;
+  color: var(--accent);
+  border: 2px solid var(--accent-light);
+}
+.btn-outline:hover { background: var(--accent-bg); }
+.btn-ghost {
+  background: transparent;
+  color: var(--t2);
+  font-size: 13px;
+  padding: 10px;
+}
+.btn-sm {
+  padding: 11px 16px;
+  font-size: 13px;
+  border-radius: 10px;
+}
+
+/* ══ TELA 1 — WELCOME ════════════════════════════════ */
+#screen-welcome .screen-header {
+  padding-bottom: 36px;
+}
+#screen-welcome .screen-header h1 {
+  font-size: 26px;
+}
+.welcome-body {
+  flex: 1;
+  padding: 24px 20px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.welcome-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px;
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+.welcome-card .icon {
+  font-size: 28px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.welcome-card h3 {
+  font-family: var(--fd);
+  font-size: 13px;
+  color: var(--accent);
+  margin-bottom: 3px;
+}
+.welcome-card p { font-size: 12px; color: var(--t2); line-height: 1.6; }
+.welcome-cta { display: flex; flex-direction: column; gap: 10px; }
+.welcome-footer {
+  text-align: center;
+  font-size: 11px;
+  color: var(--tm);
+  margin-top: 4px;
+}
+
+/* ══ TELA 2 — NOME ═══════════════════════════════════ */
+#screen-name .screen-header { padding-bottom: 24px; }
+.name-body {
+  flex: 1;
+  padding: 28px 20px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.name-body label {
+  font-family: var(--fd);
+  font-size: 18px;
+  color: var(--t1);
+  line-height: 1.3;
+  display: block;
+  margin-bottom: 8px;
+}
+.name-body input {
+  width: 100%;
+  padding: 16px;
+  border: 2px solid var(--border);
+  border-radius: 14px;
+  font-family: var(--fb);
+  font-size: 16px;
+  color: var(--t1);
+  background: var(--card);
+  outline: none;
+  transition: border-color .18s, box-shadow .18s;
+}
+.name-body input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-light);
+}
+.name-body input::placeholder { color: var(--tm); }
+#welcome-back {
+  display: none;
+  background: var(--accent-bg);
+  border: 1px solid var(--accent-light);
+  border-radius: 12px;
+  padding: 14px 16px;
+  font-size: 13px;
+  color: var(--accent-dark);
+  line-height: 1.5;
+}
+#welcome-back strong { font-family: var(--fm); font-size: 15px; color: var(--accent); }
+
+/* ══ TELA 3 — QUIZ ═══════════════════════════════════ */
+#screen-quiz {
+  background: var(--bg);
+}
+.quiz-top {
+  background: linear-gradient(135deg, #2d0a2a, #5c1454 40%, #7a1f6e);
+  padding: 52px 20px 20px;
+  flex-shrink: 0;
+}
+.quiz-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+}
+.quiz-counter {
+  font-family: var(--fm);
+  font-size: 11px;
+  color: rgba(255,255,255,.7);
+  letter-spacing: .05em;
+}
+.quiz-score {
+  font-family: var(--fm);
+  font-size: 15px;
+  font-weight: 700;
+  color: #fff;
+}
+.quiz-score span { font-size: 11px; opacity: .7; font-weight: 400; }
+.progress-bar {
+  height: 4px;
+  background: rgba(255,255,255,.2);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  background: #fff;
+  border-radius: 2px;
+  transition: width .4s cubic-bezier(.4,0,.2,1);
+}
+.timer-bar {
+  height: 3px;
+  background: rgba(255,255,255,.15);
+  border-radius: 2px;
+  margin-top: 8px;
+  overflow: hidden;
+}
+.timer-fill {
+  height: 100%;
+  background: rgba(255,255,255,.7);
+  border-radius: 2px;
+  transition: width 1s linear, background .3s;
+}
+.timer-fill.warn { background: #ffb300; }
+.timer-fill.danger { background: #ff5252; }
+
+.quiz-body {
+  flex: 1;
+  padding: 20px 16px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.question-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  box-shadow: var(--shadow);
+}
+.question-cat {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: var(--accent);
+  background: var(--accent-bg);
+  display: inline-block;
+  padding: 3px 9px;
+  border-radius: 20px;
+  margin-bottom: 12px;
+}
+.question-text {
+  font-family: var(--fd);
+  font-size: 17px;
+  line-height: 1.45;
+  color: var(--t1);
+}
+.explanation-box {
+  display: none;
+  margin-top: 14px;
+  padding: 12px 14px;
+  background: #f0f7ff;
+  border-left: 3px solid var(--correct);
+  border-radius: 0 10px 10px 0;
+  font-size: 12px;
+  color: #1a4a78;
+  line-height: 1.6;
+  animation: fadeIn .3s ease;
+}
+.explanation-box.wrong-exp {
+  background: #fff8f0;
+  border-color: var(--gold);
+  color: #7a4a00;
+}
+
+.options-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.option-btn {
+  width: 100%;
+  padding: 14px 16px;
+  background: var(--card);
+  border: 2px solid var(--border);
+  border-radius: 14px;
+  font-family: var(--fb);
+  font-size: 14px;
+  color: var(--t1);
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: border-color .15s, background .15s, transform .1s;
+  -webkit-tap-highlight-color: transparent;
+  line-height: 1.4;
+}
+.option-btn:not([disabled]):hover {
+  border-color: var(--accent-light);
+  background: var(--accent-bg);
+}
+.option-btn:not([disabled]):active { transform: scale(.97); }
+.option-letter {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--bg);
+  color: var(--tm);
+  font-family: var(--fm);
+  font-size: 11px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background .15s, color .15s;
+}
+.option-btn.correct {
+  border-color: var(--correct);
+  background: var(--correct-bg);
+  color: #0d3d6b;
+}
+.option-btn.correct .option-letter {
+  background: var(--correct);
+  color: #fff;
+}
+.option-btn.wrong {
+  border-color: var(--wrong);
+  background: var(--wrong-bg);
+  color: var(--wrong);
+  text-decoration: line-through;
+  text-decoration-color: var(--wrong);
+}
+.option-btn.wrong .option-letter {
+  background: var(--wrong);
+  color: #fff;
+}
+.option-btn[disabled] { cursor: default; }
+
+.next-btn-wrap {
+  padding: 0 16px 16px;
+  display: none;
+}
+.next-btn-wrap.visible { display: block; }
+@keyframes pulse-btn {
+  0%,100% { box-shadow: 0 4px 14px rgba(122,31,110,.35); }
+  50% { box-shadow: 0 4px 24px rgba(122,31,110,.6); }
+}
+.next-btn-wrap.visible .btn-primary { animation: pulse-btn 1.4s ease infinite; }
+
+@keyframes shake {
+  0%,100% { transform: translateX(0); }
+  20% { transform: translateX(-6px); }
+  40% { transform: translateX(6px); }
+  60% { transform: translateX(-4px); }
+  80% { transform: translateX(4px); }
+}
+.shake { animation: shake .35s ease; }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ══ TELA 4 — RESULTADO ══════════════════════════════ */
+#screen-result .screen-header { text-align: center; padding-bottom: 20px; }
+#screen-result .screen-header h1 { font-size: 18px; }
+.result-body {
+  flex: 1;
+  padding: 20px 16px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.score-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 28px 20px;
+  text-align: center;
+  box-shadow: var(--shadow);
+}
+.score-stars { font-size: 28px; margin-bottom: 12px; letter-spacing: 4px; }
+.score-value {
+  font-family: var(--fm);
+  font-size: 52px;
+  font-weight: 700;
+  color: var(--accent);
+  line-height: 1;
+  margin-bottom: 4px;
+}
+.score-max { font-size: 14px; color: var(--tm); font-family: var(--fm); }
+.score-label {
+  font-family: var(--fd);
+  font-size: 16px;
+  color: var(--t1);
+  margin-top: 10px;
+  line-height: 1.4;
+}
+.score-record {
+  display: none;
+  margin-top: 10px;
+  font-size: 13px;
+  color: var(--gold);
+  font-weight: 600;
+}
+.summary-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.summary-title {
+  padding: 12px 16px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: var(--tm);
+  border-bottom: 1px solid var(--border);
+  background: var(--bg);
+}
+.summary-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+  color: var(--t2);
+  line-height: 1.4;
+}
+.summary-item:last-child { border-bottom: none; }
+.summary-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+.result-cta { display: flex; flex-direction: column; gap: 10px; }
+
+/* ══ TELA 5 — RANKING ════════════════════════════════ */
+#screen-ranking .screen-header { padding-bottom: 20px; }
+.ranking-body {
+  flex: 1;
+  padding: 16px 16px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.ranking-empty {
+  text-align: center;
+  padding: 48px 20px;
+  color: var(--tm);
+  font-size: 14px;
+}
+.ranking-row {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: border-color .18s;
+}
+.ranking-row.me {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--accent-bg);
+}
+.rank-pos {
+  font-family: var(--fm);
+  font-size: 13px;
+  font-weight: 700;
+  width: 28px;
+  text-align: center;
+  flex-shrink: 0;
+  color: var(--tm);
+}
+.rank-pos.gold { color: #f5a623; font-size: 20px; }
+.rank-pos.silver { color: #b0bec5; font-size: 18px; }
+.rank-pos.bronze { color: #a0673a; font-size: 18px; }
+.rank-info { flex: 1; min-width: 0; }
+.rank-name {
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--t1);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.rank-rounds { font-size: 11px; color: var(--tm); margin-top: 1px; }
+.rank-score {
+  font-family: var(--fm);
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--accent);
+  flex-shrink: 0;
+}
+.ranking-back { margin-top: 8px; }
+
+/* ══ NAVEGAÇÃO NO HEADER ════════════════════════════ */
+.screen-nav {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 18px;
+  flex-wrap: wrap;
+}
+.screen-nav a {
+  color: rgba(255,255,255,.75);
+  text-decoration: none;
+  font-size: 11px;
+  font-weight: 600;
+  font-family: var(--fb);
+  padding: 4px 12px;
+  border-radius: 20px;
+  border: 1px solid rgba(255,255,255,.3);
+  transition: background .15s, color .15s;
+  white-space: nowrap;
+}
+.screen-nav a:hover { background: rgba(255,255,255,.18); color: #fff; }
+.screen-nav a.disabled { opacity: .35; cursor: default; pointer-events: none; }
+.screen-nav .sep { color: rgba(255,255,255,.3); font-size: 10px; }
+.quiz-top-nav {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px 0;
+  flex-wrap: wrap;
+}
+.quiz-top-nav a {
+  color: rgba(122,31,110,.8);
+  text-decoration: none;
+  font-size: 11px;
+  font-weight: 600;
+  font-family: var(--fb);
+  padding: 3px 10px;
+  border-radius: 20px;
+  border: 1px solid rgba(122,31,110,.3);
+  transition: background .15s, color .15s;
+  white-space: nowrap;
+}
+.quiz-top-nav a:hover { background: rgba(122,31,110,.08); color: var(--accent); }
+.quiz-top-nav a.disabled { opacity: .35; cursor: default; pointer-events: none; }
+.quiz-top-nav .sep { color: rgba(122,31,110,.3); font-size: 10px; }
+#screens { position: relative; overflow: hidden; flex: 1; min-height: 0; }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <div id="screens">
+
+  <!-- ① WELCOME -->
+  <div class="screen active" id="screen-welcome">
+    <div class="screen-header">
+      <div class="screen-nav">
+        <a href="../">← Início</a>
+        <span class="sep">·</span>
+        <a href="../apresentacao/">▶ Apresentação</a>
+      </div>
+      <span class="star">★</span>
+      <h1>Laura Perls</h1>
+      <div class="sub">Quiz da formação Territórios, Trajetórias e Travessias<br>com Vanessa Brito · @vanessabrito.psi</div>
+    </div>
+    <div class="welcome-body">
+      <div class="welcome-cta">
+        <button class="btn btn-primary" onclick="goTo('name')">Iniciar Quiz ›</button>
+        <button class="btn btn-outline" onclick="goTo('ranking')">Ver Ranking 🏆</button>
+      </div>
+      <div class="welcome-card">
+        <div class="icon">🎯</div>
+        <div>
+          <h3>Como jogar</h3>
+          <p>Responda 5 perguntas aleatórias sobre a formação. Quanto mais rápido, mais pontos. Você pode jogar várias vezes para melhorar sua pontuação no ranking!</p>
+        </div>
+      </div>
+      <div class="welcome-card">
+        <div class="icon">⭐</div>
+        <div>
+          <h3>Pontuação</h3>
+          <p>Cada acerto vale 100 pts base + bônus de velocidade: +50 pts em até 5s, +25 pts em até 10s. Pontuação máxima: 750 pts.</p>
+        </div>
+      </div>
+      <div class="welcome-card">
+        <div class="icon">🏆</div>
+        <div>
+          <h3>Ranking</h3>
+          <p>Sua melhor pontuação fica salva no ranking. Jogue de novo para tentar superar seu próprio recorde ou os de outras pessoas!</p>
+        </div>
+      </div>
+      <div class="welcome-footer">
+        Formação Laura Perls — Territórios, Trajetórias e Travessias · Vanessa Brito · 2026
+      </div>
+    </div>
+  </div>
+
+  <!-- ② NAME INPUT -->
+  <div class="screen" id="screen-name">
+    <div class="screen-header">
+      <div class="screen-nav">
+        <a href="../">← Início</a>
+        <span class="sep">·</span>
+        <a href="../apresentacao/">▶ Apresentação</a>
+      </div>
+      <span class="star">★</span>
+      <h1>Identificação</h1>
+      <div class="sub">Como você quer aparecer no ranking?</div>
+    </div>
+    <div class="name-body">
+      <div>
+        <label for="player-name">Seu nome</label>
+        <input
+          type="text"
+          id="player-name"
+          placeholder="Digite seu nome aqui..."
+          maxlength="30"
+          autocomplete="off"
+          autocorrect="off"
+          spellcheck="false"
+          oninput="onNameInput()"
+          onkeydown="if(event.key==='Enter') startQuiz()"
+        >
+      </div>
+      <div id="welcome-back"></div>
+      <button class="btn btn-primary" onclick="startQuiz()">Começar Quiz ›</button>
+      <button class="btn btn-ghost" onclick="goTo('welcome')">← Voltar</button>
+    </div>
+  </div>
+
+  <!-- ③ QUIZ -->
+  <div class="screen" id="screen-quiz">
+    <div class="quiz-top-nav">
+      <a href="../">← Início</a>
+        <span class="sep">·</span>
+        <a href="../apresentacao/">▶ Apresentação</a>
+    </div>
+    <div class="quiz-top">
+      <div class="quiz-meta">
+        <span class="quiz-counter" id="quiz-counter">PERGUNTA 1 DE 5</span>
+        <span class="quiz-score"><span>Pontos: </span><span id="quiz-score-val">0</span></span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:20%"></div></div>
+      <div class="timer-bar"><div class="timer-fill" id="timer-fill" style="width:100%"></div></div>
+    </div>
+    <div class="quiz-body">
+      <div class="question-card" id="question-card">
+        <span class="question-cat" id="question-cat">Contexto</span>
+        <div class="question-text" id="question-text">Carregando...</div>
+        <div class="explanation-box" id="explanation-box"></div>
+      </div>
+      <div class="options-list" id="options-list"></div>
+    </div>
+    <div class="next-btn-wrap" id="next-btn-wrap">
+      <button class="btn btn-primary" onclick="nextQuestion()">
+        <span id="next-btn-label">Próxima Pergunta ›</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ④ RESULTADO -->
+  <div class="screen" id="screen-result">
+    <div class="screen-header">
+      <div class="screen-nav">
+        <a href="../">← Início</a>
+        <span class="sep">·</span>
+        <a href="../apresentacao/">▶ Apresentação</a>
+      </div>
+      <span class="star">★</span>
+      <h1 id="result-header">Resultado</h1>
+      <div class="sub" id="result-name-sub">Boa partida!</div>
+    </div>
+    <div class="result-body">
+      <div class="score-card">
+        <div class="score-stars" id="result-stars">★★★☆☆</div>
+        <div class="score-value" id="result-score">0</div>
+        <div class="score-max">de 750 pontos possíveis</div>
+        <div class="score-label" id="result-msg"></div>
+        <div class="score-record" id="result-record">⭐ Novo recorde pessoal!</div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-title">Resumo das perguntas</div>
+        <div id="summary-list"></div>
+      </div>
+      <div class="result-cta">
+        <button class="btn btn-primary" onclick="playAgain()">Jogar de Novo ›</button>
+        <button class="btn btn-outline" onclick="goTo('ranking')">Ver Ranking 🏆</button>
+        <button class="btn btn-ghost" onclick="goTo('welcome')">← Início</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ⑤ RANKING -->
+  <div class="screen" id="screen-ranking">
+    <div class="screen-header">
+      <div class="screen-nav">
+        <a href="../">← Início</a>
+        <span class="sep">·</span>
+        <a href="../apresentacao/">▶ Apresentação</a>
+      </div>
+      <span class="star">🏆</span>
+      <h1>Ranking</h1>
+      <div class="sub">As melhores pontuações registradas</div>
+    </div>
+    <div class="ranking-body" id="ranking-body">
+    </div>
+  </div>
+
+  </div><!-- #screens -->
+</div><!-- #app -->
+
+<script>
+/* ════════════════════════════════════════════════════
+   ESTADO GLOBAL
+════════════════════════════════════════════════════ */
+const STORAGE_KEY = 'lpt_ranking_v1';
+const Q_PER_ROUND = 5;
+const TIMER_SECS  = 60;
+
+let state = {
+  screen: 'welcome',
+  playerName: '',
+  round: [],       // perguntas selecionadas p/ rodada (com opções embaralhadas)
+  current: 0,      // índice da pergunta atual
+  score: 0,        // pontuação acumulada
+  answers: [],     // { correct: bool, score: n } por pergunta
+  timerInterval: null,
+  timerStarted: null,
+  answered: false,
+};
+
+/* ════════════════════════════════════════════════════
+   NAVEGAÇÃO ENTRE TELAS
+════════════════════════════════════════════════════ */
+const CAT_LABELS = {
+  contexto:  'Contexto',
+  genero:    'Autoria & Gênero',
+  editorial: 'Editorial & Voz',
+  laura:     'Laura Perls',
+  metodo:    'Método',
+  conceitos: 'Conceitos',
+};
+
+function goTo(name, direction = 'right') {
+  const current = document.querySelector('.screen.active');
+  const next    = document.getElementById('screen-' + name);
+  if (!next || current === next) return;
+
+  current.classList.remove('active');
+  current.classList.add('exit-left');
+
+  next.classList.add('active');
+  next.scrollTop = 0;
+
+  setTimeout(() => current.classList.remove('exit-left'), 350);
+
+  if (name === 'ranking') renderRanking();
+  if (name === 'name')    prefetchRanking();
+}
+
+/* ════════════════════════════════════════════════════
+   TELA 2 — NOME
+════════════════════════════════════════════════════ */
+function onNameInput() {
+  const input = document.getElementById('player-name');
+  const wb    = document.getElementById('welcome-back');
+  const name  = input.value.trim();
+  if (!name) { wb.style.display = 'none'; return; }
+
+  const entry = getRankingEntry(name);
+  if (entry) {
+    wb.style.display = 'block';
+    wb.innerHTML = `Bem-vinda/o de volta! 👋<br>Sua melhor pontuação: <strong>${entry.score}</strong> pts (${entry.rounds} partida${entry.rounds !== 1 ? 's' : ''})`;
+  } else {
+    wb.style.display = 'none';
+  }
+}
+
+/* ════════════════════════════════════════════════════
+   INICIAR QUIZ
+════════════════════════════════════════════════════ */
+function startQuiz() {
+  const input = document.getElementById('player-name');
+  const name  = input.value.trim();
+  if (!name) {
+    input.focus();
+    input.style.borderColor = 'var(--wrong)';
+    setTimeout(() => input.style.borderColor = '', 800);
+    return;
+  }
+  state.playerName = name;
+  state.round      = buildRound();
+  state.current    = 0;
+  state.score      = 0;
+  state.answers    = [];
+  state.answered   = false;
+
+  goTo('quiz');
+  renderQuestion();
+}
+
+function buildRound() {
+  const shuffled = [...QUESTIONS].sort(() => Math.random() - .5).slice(0, Q_PER_ROUND);
+  return shuffled.map(q => {
+    // embaralha as opções mantendo referência à correta
+    const indices    = [0, 1, 2, 3];
+    const newOrder   = indices.sort(() => Math.random() - .5);
+    const newOptions = newOrder.map(i => q.options[i]);
+    const newCorrect = newOrder.indexOf(q.correct);
+    return { ...q, options: newOptions, correct: newCorrect };
+  });
+}
+
+/* ════════════════════════════════════════════════════
+   RENDERIZAR PERGUNTA
+════════════════════════════════════════════════════ */
+function renderQuestion() {
+  const q    = state.round[state.current];
+  const idx  = state.current;
+  const total = Q_PER_ROUND;
+
+  // meta
+  document.getElementById('quiz-counter').textContent =
+    `PERGUNTA ${idx + 1} DE ${total}`;
+  document.getElementById('progress-fill').style.width =
+    `${((idx + 1) / total) * 100}%`;
+  document.getElementById('quiz-score-val').textContent = state.score;
+
+  // categoria
+  document.getElementById('question-cat').textContent =
+    CAT_LABELS[q.category] || q.category;
+
+  // texto
+  document.getElementById('question-text').textContent = q.question;
+
+  // explicação (esconde)
+  const expBox = document.getElementById('explanation-box');
+  expBox.style.display = 'none';
+  expBox.classList.remove('wrong-exp');
+
+  // opções
+  const list = document.getElementById('options-list');
+  list.innerHTML = '';
+  const letters = ['A', 'B', 'C', 'D'];
+  q.options.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'option-btn';
+    btn.innerHTML = `<span class="option-letter">${letters[i]}</span><span>${opt}</span>`;
+    btn.onclick = () => answer(i);
+    list.appendChild(btn);
+  });
+
+  // next btn
+  const wrap = document.getElementById('next-btn-wrap');
+  wrap.classList.remove('visible');
+  document.getElementById('next-btn-label').textContent =
+    idx + 1 < total ? 'Próxima Pergunta ›' : 'Ver Resultado ›';
+
+  state.answered = false;
+  startTimer();
+}
+
+/* ════════════════════════════════════════════════════
+   TIMER
+════════════════════════════════════════════════════ */
+function startTimer() {
+  clearInterval(state.timerInterval);
+  state.timerStarted = Date.now();
+
+  const fill = document.getElementById('timer-fill');
+  fill.style.transition = 'none';
+  fill.style.width = '100%';
+  fill.className   = 'timer-fill';
+  // force reflow
+  void fill.offsetWidth;
+  fill.style.transition = `width ${TIMER_SECS}s linear`;
+  fill.style.width = '0%';
+
+  state.timerInterval = setInterval(() => {
+    const elapsed = (Date.now() - state.timerStarted) / 1000;
+    const pct     = 1 - (elapsed / TIMER_SECS);
+
+    if (pct < .33) fill.classList.add('danger');
+    else if (pct < .55) fill.classList.add('warn');
+
+    if (elapsed >= TIMER_SECS && !state.answered) {
+      clearInterval(state.timerInterval);
+      answer(-1); // tempo esgotado → resposta errada
+    }
+  }, 500);
+}
+
+function stopTimer() {
+  clearInterval(state.timerInterval);
+}
+
+function getTimeBonus() {
+  const elapsed = (Date.now() - state.timerStarted) / 1000;
+  if (elapsed <= 5)  return 50;
+  if (elapsed <= 10) return 25;
+  return 0;
+}
+
+/* ════════════════════════════════════════════════════
+   RESPONDER
+════════════════════════════════════════════════════ */
+function answer(chosen) {
+  if (state.answered) return;
+  state.answered = true;
+  stopTimer();
+
+  const q       = state.round[state.current];
+  const correct = q.correct;
+  const isRight = chosen === correct;
+  const bonus   = isRight ? getTimeBonus() : 0;
+  const pts     = isRight ? 100 + bonus : 0;
+
+  state.score += pts;
+  state.answers.push({ correct: isRight, score: pts, question: q.question });
+
+  document.getElementById('quiz-score-val').textContent = state.score;
+
+  // desabilita botões
+  const btns = document.querySelectorAll('.option-btn');
+  btns.forEach((btn, i) => {
+    btn.disabled = true;
+    if (i === correct) btn.classList.add('correct');
+    else if (i === chosen && !isRight) {
+      btn.classList.add('wrong');
+      btn.closest('.option-btn') || btn;
+    }
+  });
+
+  // shake no card se errou
+  if (!isRight) {
+    const card = document.getElementById('question-card');
+    card.classList.add('shake');
+    setTimeout(() => card.classList.remove('shake'), 400);
+  }
+
+  // explicação
+  const expBox = document.getElementById('explanation-box');
+  expBox.textContent = q.explanation;
+  if (!isRight) expBox.classList.add('wrong-exp');
+  expBox.style.display = 'block';
+
+  // mostrar botão "Próxima"
+  setTimeout(() => {
+    document.getElementById('next-btn-wrap').classList.add('visible');
+  }, 400);
+}
+
+/* ════════════════════════════════════════════════════
+   PRÓXIMA PERGUNTA
+════════════════════════════════════════════════════ */
+function nextQuestion() {
+  state.current++;
+  if (state.current >= Q_PER_ROUND) {
+    showResult();
+  } else {
+    renderQuestion();
+    // smooth scroll top
+    document.getElementById('screen-quiz').scrollTo({ top: 0, behavior: 'smooth' });
+  }
+}
+
+/* ════════════════════════════════════════════════════
+   TELA DE RESULTADO
+════════════════════════════════════════════════════ */
+const MESSAGES = [
+  { min: 0,   msg: 'Continue estudando — a pesquisa vai te surpreender!' },
+  { min: 100, msg: 'Bom começo! A história de Laura merece ser conhecida.' },
+  { min: 250, msg: 'Você está no caminho certo. A luta continua!' },
+  { min: 400, msg: 'Muito bem! Você conhece o apagamento de Laura.' },
+  { min: 550, msg: 'Excelente! Laura Perls aprovaria sua pontuação.' },
+  { min: 700, msg: 'Perfeito! Você é uma/um guardiã/guardião da memória de Laura! 🎓' },
+];
+
+function showResult() {
+  const score  = state.score;
+  const hits   = state.answers.filter(a => a.correct).length;
+  const stars  = '★'.repeat(hits) + '☆'.repeat(Q_PER_ROUND - hits);
+  const msg    = [...MESSAGES].reverse().find(m => score >= m.min)?.msg || MESSAGES[0].msg;
+
+  // header
+  document.getElementById('result-header').textContent =
+    `${hits} de ${Q_PER_ROUND} acertos`;
+  document.getElementById('result-name-sub').textContent =
+    `Parabéns, ${state.playerName}!`;
+
+  // score (counter-up)
+  document.getElementById('result-stars').textContent = stars;
+  countUp(document.getElementById('result-score'), score, 900);
+  document.getElementById('result-msg').textContent = msg;
+
+  // salvar ranking e verificar recorde (assíncrono — API compartilhada)
+  const recordEl = document.getElementById('result-record');
+  recordEl.style.display = 'none';
+  saveScore(state.playerName, score).then(isRecord => {
+    recordEl.style.display = isRecord ? 'block' : 'none';
+  });
+
+  // resumo das perguntas
+  const list = document.getElementById('summary-list');
+  list.innerHTML = '';
+  state.answers.forEach(a => {
+    const div = document.createElement('div');
+    div.className = 'summary-item';
+    div.innerHTML = `
+      <span class="summary-icon">${a.correct ? '✅' : '❌'}</span>
+      <span>${a.question}</span>
+    `;
+    list.appendChild(div);
+  });
+
+  goTo('result');
+}
+
+function playAgain() {
+  state.round    = buildRound();
+  state.current  = 0;
+  state.score    = 0;
+  state.answers  = [];
+  state.answered = false;
+  goTo('quiz');
+  renderQuestion();
+}
+
+/* ════════════════════════════════════════════════════
+   COUNTER-UP ANIMATION
+════════════════════════════════════════════════════ */
+function countUp(el, target, duration = 700) {
+  const start = performance.now();
+  const tick  = (now) => {
+    const p = Math.min((now - start) / duration, 1);
+    const e = 1 - Math.pow(1 - p, 3); // ease-out cubic
+    el.textContent = Math.round(e * target);
+    if (p < 1) requestAnimationFrame(tick);
+  };
+  requestAnimationFrame(tick);
+}
+
+/* ════════════════════════════════════════════════════
+   RANKING — API COMPARTILHADA (com fallback local)
+════════════════════════════════════════════════════ */
+const API_URL = '/api/ranking';
+let rankingCache = null;   // último ranking carregado (array)
+
+function normalise(name) { return name.trim().toLowerCase(); }
+function today() { return new Date().toISOString().split('T')[0]; }
+
+/* --- fallback local: usado enquanto a API não está no ar ou se falhar --- */
+function loadRankingLocal() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }
+  catch { return []; }
+}
+function saveRankingLocal(data) {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch {}
+}
+function saveScoreLocal(name, score) {
+  const data = loadRankingLocal();
+  const key  = normalise(name);
+  const idx  = data.findIndex(e => normalise(e.name) === key);
+  let isRecord = false;
+  if (idx === -1) {
+    data.push({ name: name.trim(), score, rounds: 1, date: today() });
+    isRecord = true;
+  } else {
+    data[idx].rounds++;
+    data[idx].date = today();
+    if (score > data[idx].score) { data[idx].score = score; isRecord = true; }
+  }
+  data.sort((a, b) => b.score - a.score || a.date.localeCompare(b.date));
+  saveRankingLocal(data);
+  return isRecord;
+}
+
+/* --- API compartilhada --- */
+async function fetchRanking() {
+  try {
+    const res = await fetch(API_URL, { cache: 'no-store' });
+    if (!res.ok) throw new Error('http ' + res.status);
+    const json = await res.json();
+    rankingCache = Array.isArray(json.ranking) ? json.ranking : [];
+    return rankingCache;
+  } catch (err) {
+    rankingCache = loadRankingLocal();   // fallback: mostra ao menos o histórico local
+    return rankingCache;
+  }
+}
+
+async function saveScore(name, score) {
+  const localRecord = saveScoreLocal(name, score);   // continuidade pessoal
+  try {
+    const res = await fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: name.trim(), score }),
+    });
+    if (!res.ok) throw new Error('http ' + res.status);
+    const json = await res.json();
+    return !!json.isRecord;
+  } catch (err) {
+    return localRecord;   // se a API falhar, usa o resultado local
+  }
+}
+
+function prefetchRanking() { fetchRanking(); }
+
+function getRankingEntry(name) {
+  const key = normalise(name);
+  const src = rankingCache || loadRankingLocal();
+  return src.find(e => normalise(e.name) === key);
+}
+
+/* ════════════════════════════════════════════════════
+   RENDERIZAR RANKING
+════════════════════════════════════════════════════ */
+async function renderRanking() {
+  const body   = document.getElementById('ranking-body');
+  const me     = normalise(state.playerName);
+
+  body.innerHTML = `<div class="ranking-empty">🏆<br><br>Carregando ranking…</div>`;
+
+  const data = await fetchRanking();
+  body.innerHTML = '';
+
+  if (!data || data.length === 0) {
+    body.innerHTML = `<div class="ranking-empty">🏆<br><br>Ainda não há pontuações registradas.<br>Seja a primeira pessoa a jogar!</div>`;
+    const btn = document.createElement('div');
+    btn.className = 'ranking-back';
+    btn.innerHTML = `<button class="btn btn-primary" onclick="goTo('welcome')">Jogar Agora ›</button>`;
+    body.appendChild(btn);
+    return;
+  }
+
+  const medals = ['🥇', '🥈', '🥉'];
+
+  data.slice(0, 10).forEach((entry, i) => {
+    const isMe = me && normalise(entry.name) === me;
+    const row  = document.createElement('div');
+    row.className = 'ranking-row' + (isMe ? ' me' : '');
+
+    let posContent = '';
+    if (i < 3) {
+      posContent = `<span class="rank-pos ${['gold','silver','bronze'][i]}">${medals[i]}</span>`;
+    } else {
+      posContent = `<span class="rank-pos">${i + 1}</span>`;
+    }
+
+    row.innerHTML = `
+      ${posContent}
+      <div class="rank-info">
+        <div class="rank-name">${escapeHTML(entry.name)}${isMe ? ' <span style="color:var(--accent);font-size:11px;">(você)</span>' : ''}</div>
+        <div class="rank-rounds">${entry.rounds} partida${entry.rounds !== 1 ? 's' : ''} · ${entry.date}</div>
+      </div>
+      <div class="rank-score">${entry.score}</div>
+    `;
+    body.appendChild(row);
+  });
+
+  const btn = document.createElement('div');
+  btn.className = 'ranking-back';
+  btn.innerHTML = `<button class="btn btn-outline" onclick="goTo('welcome')">← Voltar ao Início</button>`;
+  body.appendChild(btn);
+}
+
+function escapeHTML(str) {
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+</script>
+</body>
+</html>
