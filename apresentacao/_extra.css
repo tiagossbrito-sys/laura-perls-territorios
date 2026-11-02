@@ -94,3 +94,32 @@
 
 /* Caixa de encerramento */
 .final-handle { font-family:var(--fm); font-size:clamp(14px,1.1vw,18px); opacity:.75; letter-spacing:.04em; margin-top:14px; }
+
+/* ═══════════ CELULAR E TABLET: economia de memória e layout em coluna ═══════════ */
+/* No iPhone, 52 slides em camadas de tela cheia com blur e will-change derrubam a página
+   ("Não é possível abrir essa página"). Aqui só o slide ativo existe para o navegador. */
+@media (max-width: 900px), (pointer: coarse) {
+  .slide { will-change: auto; filter: none !important; transform: none !important;
+           transition: opacity .3s ease; }
+  .slide:not(.active):not(.out) { display: none; }
+  .bg-img, .slide.active .bg-img { animation: none !important; transform: none !important; }
+  .slide.active .sb > *, .slide.active .cv > *, .slide.active .cv2 > * { animation: none !important; }
+  .kpi, .card, .cchart, .bi, .nblock, .tcard, .sitem, .tl-item, .insight { transition: none; }
+}
+@media (max-width: 700px) {
+  .cgrid, .c2, .c3, .c12, .c21, .c32, .c23, .c13 { grid-template-columns: 1fr !important; }
+  .cgrow { flex: none; }
+  .sb { overflow-y: auto; -webkit-overflow-scrolling: touch; gap: 10px; }
+  .fios, .fios.three { grid-template-columns: 1fr; }
+  .photo { max-height: 38vh; }
+  .photo img { max-height: 38vh; }
+  .route { flex-wrap: wrap; }
+  .rpt { flex: 1 0 33%; }
+  .rpt::before { display: none; }
+  .sh { flex-direction: column; align-items: flex-start; gap: 4px; }
+  .sh-meta { text-align: left; }
+  .chdiv { padding: 0 20px; }
+  .chnum { font-size: 64px; }
+  .bigq { font-size: 28px; }
+  #dots { display: none; }
+}
