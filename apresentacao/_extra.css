@@ -123,3 +123,8 @@
   .bigq { font-size: 28px; }
   #dots { display: none; }
 }
+
+/* ═══════════ REFERÊNCIAS (slides finais) ═══════════ */
+.refs { display:flex; flex-direction:column; justify-content:center; gap:clamp(8px,1.3vh,16px); flex:1; min-height:0; max-width:1500px; }
+.ref  { font-size:clamp(18px,1.15vw,22px); line-height:1.5; color:var(--t2); padding-left:1.6em; text-indent:-1.6em; }
+.ref em { font-style:italic; color:var(--t1); }
