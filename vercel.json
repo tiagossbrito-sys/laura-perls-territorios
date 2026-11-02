@@ -2,31 +2,113 @@
   "headers": [
     {
       "source": "/",
-      "headers": [{ "key": "Cache-Control", "value": "no-cache, no-store, must-revalidate, max-age=0" }]
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, no-store, must-revalidate, max-age=0"
+        }
+      ]
     },
     {
       "source": "/apresentacao",
-      "headers": [{ "key": "Cache-Control", "value": "no-cache, no-store, must-revalidate, max-age=0" }]
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, no-store, must-revalidate, max-age=0"
+        }
+      ]
     },
     {
       "source": "/apresentacao/",
-      "headers": [{ "key": "Cache-Control", "value": "no-cache, no-store, must-revalidate, max-age=0" }]
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, no-store, must-revalidate, max-age=0"
+        }
+      ]
     },
     {
       "source": "/quiz",
-      "headers": [{ "key": "Cache-Control", "value": "no-cache, no-store, must-revalidate, max-age=0" }]
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, no-store, must-revalidate, max-age=0"
+        }
+      ]
     },
     {
       "source": "/quiz/",
-      "headers": [{ "key": "Cache-Control", "value": "no-cache, no-store, must-revalidate, max-age=0" }]
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, no-store, must-revalidate, max-age=0"
+        }
+      ]
     },
     {
       "source": "/(.*)\\.html",
-      "headers": [{ "key": "Cache-Control", "value": "no-cache, no-store, must-revalidate, max-age=0" }]
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, no-store, must-revalidate, max-age=0"
+        }
+      ]
     },
     {
       "source": "/(.*)\\.(css|js|json)",
-      "headers": [{ "key": "Cache-Control", "value": "no-cache, must-revalidate, max-age=0" }]
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, must-revalidate, max-age=0"
+        }
+      ]
+    }
+  ],
+  "redirects": [
+    {
+      "source": "/Apresentacao",
+      "destination": "/apresentacao/",
+      "permanent": false
+    },
+    {
+      "source": "/Apresentacao/:path*",
+      "destination": "/apresentacao/:path*",
+      "permanent": false
+    },
+    {
+      "source": "/APRESENTACAO/:path*",
+      "destination": "/apresentacao/:path*",
+      "permanent": false
+    },
+    {
+      "source": "/Quiz",
+      "destination": "/quiz/",
+      "permanent": false
+    },
+    {
+      "source": "/Quiz/:path*",
+      "destination": "/quiz/:path*",
+      "permanent": false
+    },
+    {
+      "source": "/QUIZ/:path*",
+      "destination": "/quiz/:path*",
+      "permanent": false
+    },
+    {
+      "source": "/apresentacao.html",
+      "destination": "/apresentacao/",
+      "permanent": false
+    },
+    {
+      "source": "/slides",
+      "destination": "/apresentacao/",
+      "permanent": false
+    },
+    {
+      "source": "/slides/:path*",
+      "destination": "/apresentacao/:path*",
+      "permanent": false
     }
   ]
 }
